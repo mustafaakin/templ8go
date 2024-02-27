@@ -23,6 +23,7 @@ These examples showcase the simplicity and power of using JavaScript expressions
 - **Dynamic Expression Evaluation**: Use JavaScript expressions right within your template strings.
 - **Bindings Support**: Seamlessly pass Go variables into the JavaScript execution context to be used within your template expressions.
 - **Easy Integration**: Designed to be easily integrated into any Go project that needs flexible string interpolation.
+- **Security**: It leverages V8, the same Javascript engine that runs Cloudflare workers and Chrome. Though we can add even more hardening.
 
 ## Getting Started
 
