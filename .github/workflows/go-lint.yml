@@ -1,0 +1,25 @@
+name: Run Golang CI Lint
+
+on:
+  pull_request:
+    paths:
+      - '**.go'
+
+concurrency:
+  group: golangci-lint-templ8go
+  cancel-in-progress: true
+
+jobs:
+  golangci:
+    name: golangci linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+            go-version-file: "go.mod"
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=5m

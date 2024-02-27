@@ -1,35 +1,44 @@
 # templ8go
 
-`templ8go` is a small library designed to resolve template strings like `Hello {{ user.name }}` utilizing the V8 
-JavaScript engine. The play on words in the name stems from blending "template" with "V8" (the JavaScript engine),
-and "8" phonetically resembling "ate". Sorry for the dad joke, ChatGPT come up with it.
+`templ8go` is a small library designed to resolve template strings like `Hello
+{{ user.name }}` utilizing the V8 JavaScript engine. The play on words in the
+name stems from blending "template" with "V8" (the JavaScript engine), and "8"
+phonetically resembling "ate". Sorry for the dad joke, ChatGPT come up with it.
 
 ## Why?
 
-While traditional templating engines are great for generating large blocks of text and support a variety of built-in 
-functions and pipe syntax, `templ8go` takes a different approach. It leverages the power and flexibility of JavaScript
-for manipulating and interpolating short strings. This allows for more dynamic and programmable template resolution
-without leaving the comfort of Go.
+While traditional templating engines are great for generating large blocks of
+text and support a variety of built-in functions and pipe syntax, `templ8go`
+takes a different approach. It leverages the power and flexibility of
+JavaScript for manipulating and interpolating short strings. This allows for
+more dynamic and programmable template resolution without leaving the comfort
+of Go.
 
 Consider the following examples where `templ8go` shines:
 
 - `Hello {{ user.name }}` with `{user:{name: Mustafa}}` resolves to `Hello Mustafa`.
 - `Your balance is {{ account.balance.toFixed(2) }}` with `{account:{balance: 1234.567}}` becomes `Your balance is 1234.57`.
 
-These examples showcase the simplicity and power of using JavaScript expressions within templates.
+These examples showcase the simplicity and power of using JavaScript
+expressions within templates.
 
 ## Features
 
-- **Dynamic Expression Evaluation**: Use JavaScript expressions right within your template strings.
-- **Bindings Support**: Seamlessly pass Go variables into the JavaScript execution context to be used within your template expressions.
-- **Easy Integration**: Designed to be easily integrated into any Go project that needs flexible string interpolation.
-- **Security**: It leverages V8, the same Javascript engine that runs Cloudflare workers and Chrome. Though we can add even more hardening.
+- **Dynamic Expression Evaluation**: Use JavaScript expressions right within
+  your template strings.
+- **Bindings Support**: Seamlessly pass Go variables into the JavaScript
+  execution context to be used within your template expressions.
+- **Easy Integration**: Designed to be easily integrated into any Go project
+  that needs flexible string interpolation.
+- **Security**: It leverages V8, the same Javascript engine that runs
+  Cloudflare workers and Chrome. Though we can add even more hardening.
 
 ## Getting Started
 
 ### Installation
 
-First, ensure you have Go installed on your machine (version 1.21 or newer is recommended). Then, install `templ8go` using `go get`:
+First, ensure you have Go installed on your machine (version 1.21 or newer is
+recommended). Then, install `templ8go` using `go get`:
 
 ```sh
 go get -u github.com/mustafaakin/templ8go
@@ -91,6 +100,17 @@ func main() {
 
     fmt.Println(result) // Output: Mustafa
 }
+```
+
+You can change the default execution timeout via calling;
+
+```go
+// now you have 200 Milliseconds for execution
+SetDefaultExecutionTimeout(200 * time.Millisecond)
+
+// rest is the same...
+result, err := templ8go.ResolveJSExpression(bindings, "user.name")
+...
 ```
 
 ## Supported Expressions
@@ -155,8 +175,9 @@ Feel free to submit pull requests or create issues for bugs, features, or sugges
 
 ## Contributing
 
-Contributions are more than welcome! If you have an idea for an improvement or find a bug, please feel free 
-to fork the repository, make your changes, and submit a pull request.
+Contributions are more than welcome! If you have an idea for an improvement or
+find a bug, please feel free to fork the repository, make your changes, and
+submit a pull request.
 
 ## License
 
