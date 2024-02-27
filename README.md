@@ -97,7 +97,6 @@ func main() {
 
 Since we use V8 engine underneath, many things are possible.
 
-
 - **Simple Arithmetic**:
     - Template: `The sum of 5 and 3 is {{ 5 + 3 }}.`
     - Bindings: `{}`
@@ -109,9 +108,9 @@ Since we use V8 engine underneath, many things are possible.
     - Output: `Good morning, Alice!`
 
 - **Array Operations**:
-    - Template: `There are {{ fruits.length }} fruits in the basket.`
-    - Bindings: `{ "fruits": ["apple", "banana", "cherry"] }`
-    - Output: `There are 3 fruits in the basket.`
+    - Template: `Users list: {{ users.map(user => user.name).join(', ') }}`
+    - Bindings `{users: [{name: 'Alice'}, {name: 'Bob'}, {name: 'Charlie'}]}`
+    - Output: `Users list Alice, Bob, Charlie`
 
 - **Object Manipulation**:
     - Template: `{{ user.firstName }} {{ user.lastName }} is {{ user.age }} years old.`
