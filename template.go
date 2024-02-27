@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ParseTemplateString(args map[string]interface{}, input string) (string, error) {
+func ResolveTemplate(args map[string]interface{}, input string) (string, error) {
 	var result strings.Builder
 	leftDelimiter := "{{"
 	rightDelimiter := "}}"

@@ -58,7 +58,7 @@ func TestParseTemplateStringSuccess(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			output, err := ParseTemplateString(test.vars, test.input)
+			output, err := ResolveTemplate(test.vars, test.input)
 
 			assert.NoError(t, err)
 			assert.Equal(t, test.expected, output)
@@ -75,6 +75,6 @@ func TestParseTemplateStringError(t *testing.T) {
 	// Unmatched expression delimiter
 	input := "{{ user.name is unmatched."
 
-	_, err := ParseTemplateString(vars, input)
+	_, err := ResolveTemplate(vars, input)
 	assert.Error(t, err, "Expected an error for unmatched expression delimiter, got none")
 }
