@@ -22,7 +22,7 @@ func SetDefaultExecutionTimeout(d time.Duration) {
 }
 
 // ResolveJSExpression handles the resolve operation with a given JS expression and binding data.
-func ResolveJSExpression(bindings map[string]interface{}, expression string) (interface{}, error) {
+func ResolveJSExpression(bindings map[string]any, expression string) (any, error) {
 	ctx := v8.NewContext()
 	defer ctx.Close()
 
@@ -41,7 +41,7 @@ func ResolveJSExpression(bindings map[string]interface{}, expression string) (in
 		}
 	}
 
-	resultChan := make(chan interface{}, 1)
+	resultChan := make(chan any, 1)
 	errorChan := make(chan error, 1)
 
 	go func() {
@@ -51,7 +51,7 @@ func ResolveJSExpression(bindings map[string]interface{}, expression string) (in
 			return
 		}
 
-		var result interface{}
+		var result any
 		if err := json.Unmarshal([]byte(val.String()), &result); err != nil {
 			errorChan <- fmt.Errorf("failed to unmarshal result: %w", err)
 			return

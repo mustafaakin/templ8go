@@ -14,7 +14,7 @@ var (
 )
 
 // ResolveTemplate handles the resolve operation with a given template string and binding data as args.
-func ResolveTemplate(args map[string]interface{}, input string) (string, error) {
+func ResolveTemplate(args map[string]any, input string) (string, error) {
 	var result strings.Builder
 	leftDelimiter := "{{"
 	rightDelimiter := "}}"

@@ -67,8 +67,8 @@ import (
 
 func main() {
     template := "Hello {{ user.name }}"
-    bindings := map[string]interface{}{
-        "user": map[string]interface{}{
+    bindings := map[string]any{
+        "user": map[string]any{
             "name": "Mustafa",
         },
     }
@@ -95,8 +95,8 @@ import (
 )
 
 func main() {
-    bindings := map[string]interface{}{
-        "user": map[string]interface{}{
+    bindings := map[string]any{
+        "user": map[string]any{
             "name": "Mustafa",
         },
     }
