@@ -11,9 +11,9 @@ import (
 func TestResolveJSExpression(t *testing.T) {
 	tests := []struct {
 		name       string
-		bindings   map[string]interface{}
+		bindings   map[string]any
 		expression string
-		expected   interface{}
+		expected   any
 		expectErr  bool
 	}{
 		{
@@ -24,7 +24,7 @@ func TestResolveJSExpression(t *testing.T) {
 		},
 		{
 			name: "basic math, multiplication expression with bindings",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"a": 10,
 				"b": 5,
 			},
@@ -33,8 +33,8 @@ func TestResolveJSExpression(t *testing.T) {
 		},
 		{
 			name: "math, addition with complex object",
-			bindings: map[string]interface{}{
-				"obj": map[string]interface{}{
+			bindings: map[string]any{
+				"obj": map[string]any{
 					"value": 5,
 				},
 			},
@@ -55,7 +55,7 @@ func TestResolveJSExpression(t *testing.T) {
 		},
 		{
 			name: "js Math function example",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"x": 10,
 				"y": 20,
 			},
@@ -64,7 +64,7 @@ func TestResolveJSExpression(t *testing.T) {
 		},
 		{
 			name: "js value compare",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"emptyString": "",
 				"nullValue":   nil,
 			},
@@ -73,7 +73,7 @@ func TestResolveJSExpression(t *testing.T) {
 		},
 		{
 			name: "type coercion",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"stringValue": "10",
 				"numValue":    10,
 			},
@@ -88,7 +88,7 @@ func TestResolveJSExpression(t *testing.T) {
 		},
 		{
 			name: "should raise json.Marshal error",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"key": make(chan struct{}),
 			},
 			expression: "",
@@ -96,7 +96,7 @@ func TestResolveJSExpression(t *testing.T) {
 		},
 		{
 			name: "should raise Set error",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"key": "while(true){}",
 			},
 			expression: "",
@@ -121,18 +121,18 @@ func TestResolveJSExpression(t *testing.T) {
 		SetDefaultExecutionTimeout(10 * time.Microsecond)
 		defer func() { SetDefaultExecutionTimeout(originalTimeout) }()
 
-		_, err := ResolveJSExpression(map[string]interface{}{"a": 1}, "a + 2")
+		_, err := ResolveJSExpression(map[string]any{"a": 1}, "a + 2")
 		assert.ErrorIs(t, err, ErrResolveJSExpressionExecutionTimeout)
 	})
 }
 
 func TestResolveJSExpressionBindingsUnchanged(t *testing.T) {
-	initialBindings := map[string]interface{}{
+	initialBindings := map[string]any{
 		"x": 5,
 		"y": 10,
 	}
 	// Create a deep copy of the initialBindings for comparison after function execution
-	expectedBindings := make(map[string]interface{})
+	expectedBindings := make(map[string]any)
 	for k, v := range initialBindings {
 		expectedBindings[k] = v
 	}

@@ -1,9 +1,14 @@
+[![build and test](https://github.com/mustafaakin/templ8go/actions/workflows/go.yml/badge.svg)](https://github.com/mustafaakin/templ8go/actions/workflows/go.yml)
+[![golang ci Lint](https://github.com/mustafaakin/templ8go/actions/workflows/go-lint.yml/badge.svg)](https://github.com/mustafaakin/templ8go/actions/workflows/go-lint.yml)
+
 # templ8go
 
 `templ8go` is a small library designed to resolve template strings like `Hello
 {{ user.name }}` utilizing the V8 JavaScript engine. The play on words in the
 name stems from blending "template" with "V8" (the JavaScript engine), and "8"
 phonetically resembling "ate". Sorry for the dad joke, ChatGPT come up with it.
+
+---
 
 ## Why?
 
@@ -22,6 +27,8 @@ Consider the following examples where `templ8go` shines:
 These examples showcase the simplicity and power of using JavaScript
 expressions within templates.
 
+---
+
 ## Features
 
 - **Dynamic Expression Evaluation**: Use JavaScript expressions right within
@@ -32,6 +39,8 @@ expressions within templates.
   that needs flexible string interpolation.
 - **Security**: It leverages V8, the same Javascript engine that runs
   Cloudflare workers and Chrome. Though we can add even more hardening.
+
+---
 
 ## Getting Started
 
@@ -58,8 +67,8 @@ import (
 
 func main() {
     template := "Hello {{ user.name }}"
-    bindings := map[string]interface{}{
-        "user": map[string]interface{}{
+    bindings := map[string]any{
+        "user": map[string]any{
             "name": "Mustafa",
         },
     }
@@ -86,8 +95,8 @@ import (
 )
 
 func main() {
-    bindings := map[string]interface{}{
-        "user": map[string]interface{}{
+    bindings := map[string]any{
+        "user": map[string]any{
             "name": "Mustafa",
         },
     }
@@ -112,6 +121,8 @@ SetDefaultExecutionTimeout(200 * time.Millisecond)
 result, err := templ8go.ResolveJSExpression(bindings, "user.name")
 ...
 ```
+
+---
 
 ## Supported Expressions
 
@@ -162,6 +173,7 @@ Since we use V8 engine underneath, many things are possible.
     - Bindings: `{ "user": {"name": "Eve", "isActive": true, "roles": ["admin", "editor"]} }`
     - Output: `Eve is active and has 2 roles.`
 
+---
 
 ## Development
 
@@ -173,6 +185,8 @@ go test ./...
 
 Feel free to submit pull requests or create issues for bugs, features, or suggestions.
 
+---
+
 ## Contributing
 
 Contributions are more than welcome! If you have an idea for an improvement or
@@ -182,4 +196,3 @@ submit a pull request.
 ## License
 
 `templ8go` is made available under the MIT License. For more details, see the LICENSE file in the repository.
-

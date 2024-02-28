@@ -10,14 +10,14 @@ import (
 func TestParseTemplateStringSuccess(t *testing.T) {
 	tests := []struct {
 		name     string
-		vars     map[string]interface{}
+		vars     map[string]any
 		input    string
 		expected string
 	}{
 		{
 			"Simple substitution",
-			map[string]interface{}{
-				"user": map[string]interface{}{
+			map[string]any{
+				"user": map[string]any{
 					"name": "Mustafa",
 					"age":  32,
 				},
@@ -27,8 +27,8 @@ func TestParseTemplateStringSuccess(t *testing.T) {
 		},
 		{
 			"Arithmetic operation",
-			map[string]interface{}{
-				"user": map[string]interface{}{
+			map[string]any{
+				"user": map[string]any{
 					"age": 32,
 				},
 			},
@@ -37,9 +37,9 @@ func TestParseTemplateStringSuccess(t *testing.T) {
 		},
 		{
 			"Nested object access",
-			map[string]interface{}{
-				"user": map[string]interface{}{
-					"profile": map[string]interface{}{
+			map[string]any{
+				"user": map[string]any{
+					"profile": map[string]any{
 						"nickname": "Moose",
 					},
 				},
@@ -49,8 +49,8 @@ func TestParseTemplateStringSuccess(t *testing.T) {
 		},
 		{
 			"Array access",
-			map[string]interface{}{
-				"favorites": []interface{}{"Pizza", "Ice Cream"},
+			map[string]any{
+				"favorites": []any{"Pizza", "Ice Cream"},
 			},
 			"I love {{ favorites[0] }} and {{ favorites[1] }}.",
 			"I love Pizza and Ice Cream.",
@@ -69,8 +69,8 @@ func TestParseTemplateStringSuccess(t *testing.T) {
 
 // TestParseTemplateStringError tests error handling.
 func TestParseTemplateStringError(t *testing.T) {
-	vars := map[string]interface{}{
-		"user": map[string]interface{}{},
+	vars := map[string]any{
+		"user": map[string]any{},
 	}
 
 	// Unmatched expression delimiter
@@ -84,29 +84,29 @@ func TestReadmeExamples(t *testing.T) {
 	tests := []struct {
 		name     string
 		template string
-		bindings map[string]interface{}
+		bindings map[string]any
 		want     string
 	}{
 		{
 			name:     "Simple Arithmetic",
 			template: "The sum of 5 and 3 is {{ 5 + 3 }}.",
-			bindings: map[string]interface{}{},
+			bindings: map[string]any{},
 			want:     "The sum of 5 and 3 is 8.",
 		},
 		{
 			name:     "Conditional Greetings",
 			template: "Good {{ hour < 12 ? 'morning' : 'afternoon' }}, {{ user.name }}!",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"hour": 9,
-				"user": map[string]interface{}{"name": "Alice"},
+				"user": map[string]any{"name": "Alice"},
 			},
 			want: "Good morning, Alice!",
 		},
 		{
 			name:     "Array Operations",
 			template: "Users list: {{ users.map(user => user.name).join(', ') }}",
-			bindings: map[string]interface{}{
-				"users": []map[string]interface{}{
+			bindings: map[string]any{
+				"users": []map[string]any{
 					{"name": "Alice"},
 					{"name": "Bob"},
 					{"name": "Charlie"},
@@ -117,15 +117,15 @@ func TestReadmeExamples(t *testing.T) {
 		{
 			name:     "Object Manipulation",
 			template: "{{ user.firstName }} {{ user.lastName }} is {{ user.age }} years old.",
-			bindings: map[string]interface{}{
-				"user": map[string]interface{}{"firstName": "John", "lastName": "Doe", "age": 28},
+			bindings: map[string]any{
+				"user": map[string]any{"firstName": "John", "lastName": "Doe", "age": 28},
 			},
 			want: "John Doe is 28 years old.",
 		},
 		{
 			name:     "Logical Operations",
 			template: "You are {{ age >= 18 ? 'an adult' : 'a minor' }}.",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"age": 20,
 			},
 			want: "You are an adult.",
@@ -133,15 +133,15 @@ func TestReadmeExamples(t *testing.T) {
 		{
 			name:     "String Concatenation",
 			template: "{{ 'Hello, ' + user.name + '!'}}",
-			bindings: map[string]interface{}{
-				"user": map[string]interface{}{"name": "Jane"},
+			bindings: map[string]any{
+				"user": map[string]any{"name": "Jane"},
 			},
 			want: "Hello, Jane!",
 		},
 		{
 			name:     "Using JavaScript Functions",
 			template: "Your score is {{ Math.min(score, 100) }}.",
-			bindings: map[string]interface{}{
+			bindings: map[string]any{
 				"score": 105,
 			},
 			want: "Your score is 100.",
@@ -149,9 +149,9 @@ func TestReadmeExamples(t *testing.T) {
 		{
 			name:     "Nested Object Access",
 			template: "Project {{ project.details.name }} is due on {{ project.details.dueDate }}.",
-			bindings: map[string]interface{}{
-				"project": map[string]interface{}{
-					"details": map[string]interface{}{"name": "Apollo", "dueDate": "2024-03-01"},
+			bindings: map[string]any{
+				"project": map[string]any{
+					"details": map[string]any{"name": "Apollo", "dueDate": "2024-03-01"},
 				},
 			},
 			want: "Project Apollo is due on 2024-03-01.",
@@ -159,8 +159,8 @@ func TestReadmeExamples(t *testing.T) {
 		{
 			name:     "Complex Expressions",
 			template: "{{ user.isActive ? user.name + ' is active and has ' + user.roles.length + ' roles' : user.name + ' is not active' }}.",
-			bindings: map[string]interface{}{
-				"user": map[string]interface{}{"name": "Eve", "isActive": true, "roles": []string{"admin", "editor"}},
+			bindings: map[string]any{
+				"user": map[string]any{"name": "Eve", "isActive": true, "roles": []string{"admin", "editor"}},
 			},
 			want: "Eve is active and has 2 roles.",
 		},
