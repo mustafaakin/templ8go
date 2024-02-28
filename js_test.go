@@ -1,9 +1,11 @@
 package templ8go
 
 import (
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestResolveJSExpression(t *testing.T) {
@@ -15,13 +17,13 @@ func TestResolveJSExpression(t *testing.T) {
 		expectErr  bool
 	}{
 		{
-			name:       "Basic",
-			bindings:   map[string]interface{}{},
+			name:       "basic math, addition expression",
+			bindings:   nil,
 			expression: "2 + 2",
 			expected:   4.0,
 		},
 		{
-			name: "WithBindings",
+			name: "basic math, multiplication expression with bindings",
 			bindings: map[string]interface{}{
 				"a": 10,
 				"b": 5,
@@ -30,7 +32,7 @@ func TestResolveJSExpression(t *testing.T) {
 			expected:   50.0,
 		},
 		{
-			name: "Complex",
+			name: "math, addition with complex object",
 			bindings: map[string]interface{}{
 				"obj": map[string]interface{}{
 					"value": 5,
@@ -40,19 +42,19 @@ func TestResolveJSExpression(t *testing.T) {
 			expected:   20.0,
 		},
 		{
-			name:       "ErrorHandling",
-			bindings:   map[string]interface{}{},
+			name:       "non existing declaration example",
+			bindings:   nil,
 			expression: "undeclaredVariable + 1",
 			expectErr:  true,
 		},
 		{
-			name:       "Timeout",
-			bindings:   map[string]interface{}{},
+			name:       "syntax error",
+			bindings:   nil,
 			expression: "while(true){}",
 			expectErr:  true,
 		},
 		{
-			name: "JSFunction",
+			name: "js Math function example",
 			bindings: map[string]interface{}{
 				"x": 10,
 				"y": 20,
@@ -61,7 +63,7 @@ func TestResolveJSExpression(t *testing.T) {
 			expected:   20.0,
 		},
 		{
-			name: "EdgeCases",
+			name: "js value compare",
 			bindings: map[string]interface{}{
 				"emptyString": "",
 				"nullValue":   nil,
@@ -70,7 +72,7 @@ func TestResolveJSExpression(t *testing.T) {
 			expected:   true,
 		},
 		{
-			name: "TypeCoercion",
+			name: "type coercion",
 			bindings: map[string]interface{}{
 				"stringValue": "10",
 				"numValue":    10,
@@ -79,9 +81,25 @@ func TestResolveJSExpression(t *testing.T) {
 			expected:   true,
 		},
 		{
-			name:       "SecurityConcerns",
-			bindings:   map[string]interface{}{},
+			name:       "js security concerns",
+			bindings:   nil,
 			expression: "this.constructor.constructor('return process')().exit()",
+			expectErr:  true,
+		},
+		{
+			name: "should raise json.Marshal error",
+			bindings: map[string]interface{}{
+				"key": make(chan struct{}),
+			},
+			expression: "",
+			expectErr:  true,
+		},
+		{
+			name: "should raise Set error",
+			bindings: map[string]interface{}{
+				"key": "while(true){}",
+			},
+			expression: "",
 			expectErr:  true,
 		},
 	}
@@ -97,6 +115,15 @@ func TestResolveJSExpression(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("timeout error", func(t *testing.T) {
+		originalTimeout := defaultExecutionTimeout
+		SetDefaultExecutionTimeout(10 * time.Microsecond)
+		defer func() { SetDefaultExecutionTimeout(originalTimeout) }()
+
+		_, err := ResolveJSExpression(map[string]interface{}{"a": 1}, "a + 2")
+		assert.ErrorIs(t, err, ErrResolveJSExpressionExecutionTimeout)
+	})
 }
 
 func TestResolveJSExpressionBindingsUnchanged(t *testing.T) {
@@ -122,5 +149,9 @@ func TestResolveJSExpressionBindingsUnchanged(t *testing.T) {
 	assert.NoError(t, err, "Unexpected error occurred during second execution")
 
 	// Verify bindings have not changed after the second execution
-	assert.True(t, reflect.DeepEqual(initialBindings, expectedBindings), "Bindings were modified after second execution")
+	assert.True(
+		t,
+		reflect.DeepEqual(initialBindings, expectedBindings),
+		"Bindings were modified after second execution",
+	)
 }

@@ -1,13 +1,14 @@
 package templ8go
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestParseTemplateStringSuccess tests successful template parsing.
 func TestParseTemplateStringSuccess(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		name     string
 		vars     map[string]interface{}
 		input    string

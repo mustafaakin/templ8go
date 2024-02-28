@@ -2,11 +2,18 @@ package templ8go
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 )
 
+// sentinel errors.
+var (
+	ErrResolveTemplateUnmatchedExpressionDelimeter = errors.New("unmatched expression delimiter")
+)
+
+// ResolveTemplate handles the resolve operation with a given template string and binding data as args.
 func ResolveTemplate(args map[string]interface{}, input string) (string, error) {
 	var result strings.Builder
 	leftDelimiter := "{{"
@@ -23,7 +30,7 @@ func ResolveTemplate(args map[string]interface{}, input string) (string, error) 
 		leftIndex += start
 		rightIndex := strings.Index(input[leftIndex:], rightDelimiter)
 		if rightIndex == -1 {
-			return "", fmt.Errorf("unmatched expression delimiter")
+			return "", ErrResolveTemplateUnmatchedExpressionDelimeter
 		}
 		rightIndex += leftIndex + len(rightDelimiter) - 1
 

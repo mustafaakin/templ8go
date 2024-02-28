@@ -2,11 +2,26 @@ package templ8go
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	v8 "rogchap.com/v8go"
 	"time"
+
+	v8 "rogchap.com/v8go"
 )
 
+var defaultExecutionTimeout = 100 * time.Millisecond
+
+// sentinel errors.
+var (
+	ErrResolveJSExpressionExecutionTimeout = errors.New("execution timeout error")
+)
+
+// SetDefaultExecutionTimeout overrides default execution timeout.
+func SetDefaultExecutionTimeout(d time.Duration) {
+	defaultExecutionTimeout = d
+}
+
+// ResolveJSExpression handles the resolve operation with a given JS expression and binding data.
 func ResolveJSExpression(bindings map[string]interface{}, expression string) (interface{}, error) {
 	ctx := v8.NewContext()
 	defer ctx.Close()
@@ -17,14 +32,12 @@ func ResolveJSExpression(bindings map[string]interface{}, expression string) (in
 			return nil, fmt.Errorf("failed to marshal value for key %s: %w", key, err)
 		}
 
-		// Directly use the marshaled JSON string instead of converting back to string.
 		if err := ctx.Global().Set(key, string(j)); err != nil {
 			return nil, fmt.Errorf("failed to set global property %s: %w", key, err)
 		}
 
-		script := fmt.Sprintf("%s = JSON.parse(%s)", key, key)
-		if _, err := ctx.RunScript(script, ""); err != nil {
-			return nil, fmt.Errorf("failed to parse global property %s: %w", key, err)
+		if _, err := ctx.RunScript(key+" = JSON.parse("+key+")", ""); err != nil {
+			return nil, fmt.Errorf("failed to run script, key: %s: %w", key, err) // JSError
 		}
 	}
 
@@ -32,10 +45,9 @@ func ResolveJSExpression(bindings map[string]interface{}, expression string) (in
 	errorChan := make(chan error, 1)
 
 	go func() {
-		script := fmt.Sprintf("JSON.stringify(%s)", expression)
-		val, err := ctx.RunScript(script, "")
+		val, err := ctx.RunScript("JSON.stringify("+expression+")", "")
 		if err != nil {
-			errorChan <- fmt.Errorf("failed to evaluate expression: %w", err)
+			errorChan <- fmt.Errorf("%w, expression was: %s", err, expression)
 			return
 		}
 
@@ -53,8 +65,8 @@ func ResolveJSExpression(bindings map[string]interface{}, expression string) (in
 		return result, nil
 	case err := <-errorChan:
 		return nil, err
-	case <-time.After(100 * time.Millisecond): // TODO: configurable
+	case <-time.After(defaultExecutionTimeout):
 		ctx.Isolate().TerminateExecution()
-		return nil, fmt.Errorf("execution timeout")
+		return nil, ErrResolveJSExpressionExecutionTimeout
 	}
 }
